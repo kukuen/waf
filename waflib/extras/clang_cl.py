@@ -24,7 +24,7 @@ Or:
 
 import sys, os
 
-from waflib import Utils
+from waflib import Utils, Errors, Logs
 from waflib.Configure import conf
 
 def options(opt):
@@ -71,11 +71,67 @@ def find_clang_cl(conf):
 	v.CC = v.CXX = cc
 	v.CC_NAME_SECONDARY = v.CXX_NAME_SECONDARY = 'clang'
 
+	if sys.platform != 'win32':
+		v.MSVC_COMPILER = 'msvc'
+		v.MSVC_VERSION = 19
+
+		if not v.LINK_CXX:
+			conf.find_program( \
+				'lld-link', \
+				path_list=paths, \
+				errmsg='lld-link was not found (linker)', \
+				var='LINK_CXX')
+
+		if not v.LINK_CC:
+			v.LINK_CC = v.LINK_CXX
+
+@conf
+def find_llvm_tools(conf):
+	"""
+	Find the librarian, manifest tool, and resource compiler.
+	"""
+
+	v = conf.env
+
+	v.CC_NAME = v.CXX_NAME = 'msvc'
+
+	llvm_env_path = conf.environ.get('LLVM_PATH')
+	llvm_path = None
+	if llvm_env_path:
+		llvm_path = llvm_env_path
+	elif 'LLVM_PATH' in v:
+		llvm_path = v['LLVM_PATH']
+
+	paths = v.PATH
+	if llvm_path:
+		paths = [llvm_path] + v.PATH
+
+	if not v.AR:
+		stliblink = conf.find_program('llvm-lib', path_list=paths, var='AR')
+		if not stliblink:
+			conf.fatal('Unable to find required program "llvm-lib"')
+
+		v.ARFLAGS = ['/nologo']
+
+	# We assume clang_cl to only be used with relatively new MSVC installations.
+	v.MSVC_MANIFEST = True
+	conf.find_program('llvm-mt', path_list=paths, var='MT')
+	v.MTFLAGS = ['/nologo']
+
+	try:
+		conf.load('winres')
+	except Errors.ConfigurationError:
+		Logs.warn('Resource compiler not found. Compiling resource file is disabled')
+
 def configure(conf):
 	from waflib.Tools.msvc import autodetect, find_msvc, msvc_common_flags
 
-	conf.autodetect(True)
-	conf.find_msvc()
+	if sys.platform == 'win32':
+		conf.autodetect(True)
+		conf.find_msvc()
+	else:
+		conf.find_llvm_tools()
+
 	conf.find_clang_cl()
 	conf.msvc_common_flags()
 	conf.cc_load_tools()
