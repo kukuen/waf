@@ -4,8 +4,8 @@
 
 "Process *.rc* files for C/C++: X{.rc -> [.res|.rc.o]}"
 
-import re, sys
-from waflib import Task
+import re
+from waflib import Task, Utils
 from waflib.TaskGen import extension
 from waflib.Tools import c_preproc
 
@@ -68,7 +68,7 @@ def configure(conf):
 	v = conf.env
 	if not v.WINRC:
 		if v.CC_NAME == 'msvc':
-			if sys.platform == 'win32':
+			if Utils.is_win32:
 				conf.find_program('RC', var='WINRC', path_list=v.PATH)
 			else:
 				llvm_env_path = conf.environ.get('LLVM_PATH')
