@@ -8,7 +8,9 @@ build
 demos/*/build*
 playground/*/build*
 .waf-*
+waf-*
 .waf3-*
+waf3-*
 *.log
 .DS_Store
 .AppleDouble
@@ -37,3 +39,9 @@ Temporary Items
 
 # Windows build output
 waf.bat
+
+# Vim temporary files
+*.swp
+
+# YouCompleteMe configuration
+.ycm_extra_conf.py
