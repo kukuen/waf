@@ -21,7 +21,7 @@ Or:
 		self.load('clang_cl')
 """
 
-import sys, os
+import os
 
 from waflib import Utils, Errors, Logs
 from waflib.Configure import conf
@@ -104,7 +104,7 @@ def find_llvm_tools(self):
 		Logs.warn('Resource compiler not found. Compiling resource file is disabled')
 
 def configure(self):
-	if sys.platform == 'win32':
+	if Utils.is_win32:
 		self.autodetect(True)
 		self.find_msvc()
 	else:
