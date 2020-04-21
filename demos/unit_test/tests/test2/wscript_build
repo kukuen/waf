@@ -5,7 +5,8 @@ if bld.env['PYTHON']:
 	bld(
 			features             = 'test_scripts',
 			test_scripts_source  = 'test.py',
-			test_scripts_template = '${PYTHON} ${SCRIPT}'
+			test_scripts_template = '${PYTHON} ${SCRIPT}',
+			name                 = 'test2',
 	)
 
 

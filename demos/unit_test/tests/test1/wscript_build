@@ -7,5 +7,6 @@ bld(
 	target   = 'unit_test_program',
 	use      = 'unittestmain useless CPPUNIT',
 	ut_cwd   = bld.path,
+	name     = 'test1',
 )
 
