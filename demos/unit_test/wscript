@@ -40,14 +40,16 @@ def summary(bld):
 		Logs.pprint('CYAN', 'test report %3.0f%% success' % val)
 
 		Logs.pprint('CYAN', '  tests that fail %d/%d' % (tfail, total))
-		for (f, code, out, err, ut_task) in lst:
-			if code:
+		for result in lst:
+			if result.exit_code:
 				# In ut_task we have the task running the test and we can get any extra information
 				# from there (in this example just the generator name)
-				Logs.pprint('CYAN', '    %s (%s)' % (f, ut_task.generator.name))
-				Logs.pprint('RED', 'status: %r' % code)
-				if out: Logs.pprint('RED', 'out: %r' % out)
-				if err: Logs.pprint('RED', 'err: %r' % err)
+				Logs.pprint('CYAN', '    %s (%s)' % (result.test_path, result.generator.name))
+				Logs.pprint('RED', 'status: %r' % result.exit_code)
+				if result.out:
+					Logs.pprint('RED', 'out: %r' % result.out)
+				if result.err:
+					Logs.pprint('RED', 'err: %r' % result.err)
 
 def build(bld):
 	bld.recurse('src tests')

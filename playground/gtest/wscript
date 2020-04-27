@@ -29,22 +29,22 @@ def gtest_results(bld):
     lst = getattr(bld, 'utest_results', [])
     if not lst:
         return
-    for (f, code, out, err, ut_task) in lst:
-        # if not code:
+    for result in lst:
+        # if not result.exit_code:
         #     continue
 
         # uncomment if you want to see what's happening
         # print(str(out, 'utf-8'))
-        output = str(out, 'utf-8').splitlines()
+        output = str(result.out, 'utf-8').splitlines()
         for i, line in enumerate(output):
-            if '[ RUN      ]' in line and code:
+            if '[ RUN      ]' in line and result.exit_code:
                 i += 1
                 if '    OK ]' in output[i]:
                     continue
                 while not '[ ' in output[i]:
                     Logs.warn(output[i])
                     i += 1
-            elif ' FAILED  ]' in line and code:
+            elif ' FAILED  ]' in line and result.exit_code:
                 Logs.error(line)
             elif ' PASSED  ]' in line:
                 Logs.info(line)

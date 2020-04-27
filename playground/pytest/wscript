@@ -18,9 +18,9 @@ def test_results(bld):
 	lst = getattr(bld, 'utest_results', [])
 	if not lst:
 		return
-	for (f, code, out, err, ut_task) in lst:
-		print(out.decode('utf-8'))
-		print(err.decode('utf-8'))
+	for result in lst:
+		print(result.out.decode('utf-8'))
+		print(result.err.decode('utf-8'))
 
 
 def options(opt):
