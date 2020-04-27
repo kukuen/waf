@@ -23,7 +23,8 @@ if bld.env['PYTHON']:
 			features              = 'test_scripts',
 			test_scripts_source   = 'test.1.py test.2.py',
 			test_scripts_template = '${PYTHON} ${SCRIPT}',
-			test_scripts_paths    = paths
+			test_scripts_paths    = paths,
+			name                  = 'test3',
 	)
 
 

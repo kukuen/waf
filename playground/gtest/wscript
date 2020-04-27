@@ -29,7 +29,7 @@ def gtest_results(bld):
     lst = getattr(bld, 'utest_results', [])
     if not lst:
         return
-    for (f, code, out, err) in lst:
+    for (f, code, out, err, ut_task) in lst:
         # if not code:
         #     continue
 

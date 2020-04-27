@@ -222,7 +222,7 @@ class utest(Task.Task):
 		proc = Utils.subprocess.Popen(cmd, cwd=self.get_cwd().abspath(), env=self.get_test_env(),
 			stderr=Utils.subprocess.PIPE, stdout=Utils.subprocess.PIPE, shell=isinstance(cmd,str))
 		(stdout, stderr) = proc.communicate()
-		self.waf_unit_test_results = tup = (self.inputs[0].abspath(), proc.returncode, stdout, stderr)
+		self.waf_unit_test_results = tup = (self.inputs[0].abspath(), proc.returncode, stdout, stderr, self)
 		testlock.acquire()
 		try:
 			return self.generator.add_test_results(tup)
@@ -249,12 +249,12 @@ def summary(bld):
 		tfail = len([x for x in lst if x[1]])
 
 		Logs.pprint('GREEN', '  tests that pass %d/%d' % (total-tfail, total))
-		for (f, code, out, err) in lst:
+		for (f, code, out, err, ut_task) in lst:
 			if not code:
 				Logs.pprint('GREEN', '    %s' % f)
 
 		Logs.pprint('GREEN' if tfail == 0 else 'RED', '  tests that fail %d/%d' % (tfail, total))
-		for (f, code, out, err) in lst:
+		for (f, code, out, err, ut_task) in lst:
 			if code:
 				Logs.pprint('RED', '    %s' % f)
 
@@ -271,7 +271,7 @@ def set_exit_code(bld):
 			bld.add_post_fun(waf_unit_test.set_exit_code)
 	"""
 	lst = getattr(bld, 'utest_results', [])
-	for (f, code, out, err) in lst:
+	for (f, code, out, err, ut_task) in lst:
 		if code:
 			msg = []
 			if out:

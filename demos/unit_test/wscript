@@ -40,9 +40,11 @@ def summary(bld):
 		Logs.pprint('CYAN', 'test report %3.0f%% success' % val)
 
 		Logs.pprint('CYAN', '  tests that fail %d/%d' % (tfail, total))
-		for (f, code, out, err) in lst:
+		for (f, code, out, err, ut_task) in lst:
 			if code:
-				Logs.pprint('CYAN', '    %s' % f)
+				# In ut_task we have the task running the test and we can get any extra information
+				# from there (in this example just the generator name)
+				Logs.pprint('CYAN', '    %s (%s)' % (f, ut_task.generator.name))
 				Logs.pprint('RED', 'status: %r' % code)
 				if out: Logs.pprint('RED', 'out: %r' % out)
 				if err: Logs.pprint('RED', 'err: %r' % err)
